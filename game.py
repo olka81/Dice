@@ -1,19 +1,7 @@
-import random
+from player import Player, BotPlayer
 
-number = random.randint(1, 100)
+players = [Player("You"), BotPlayer("Bot1"), BotPlayer("Bot2")]
 
-print("I puzzled a number!")
-p1 = int(input("Player 1:"))
-p2 = int(input("Player 2:"))
-
-d1 = abs(number - p1)
-d2 = abs(number - p2)
-
-print(f"The answer is: {number}")
-
-if d1 < d2:
-    print("Congrats, Player1")
-elif d2 < d1:
-    print("Congrats, Player2")
-else :
-    print("You both win!")
+for player in players:
+    player.dice = [0] * 5 
+    player.roll_dice()
