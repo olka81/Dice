@@ -4,6 +4,7 @@ class Game:
     def __init__(self):
         self.players = None
         self.round_number = 0
+        self.starting_player = None
 
     def active_players(self):
         return [p for p in self.players if p.active]
@@ -14,6 +15,7 @@ class Game:
     def run(self, players):
         self.players = players
         self.round_number = 1
+        self.starting_player = players[0]
         while not self.is_over():
             print(f"\n=== Round {self.round_number} ===")
             round = Round(self)

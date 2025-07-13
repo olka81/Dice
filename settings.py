@@ -1,2 +1,2 @@
 USE_JOKERS = False  # Change to True to treat 1s as wild
-DEBUG = False #True        # Show all dice for all players
+DEBUG =  True        # Show all dice for all players
