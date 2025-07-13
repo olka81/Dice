@@ -9,6 +9,7 @@ class Round:
         self.current_bidder = None
 
     def play(self):
+        #TODO think about change of first player
         for p in self.players:
             p.roll_dice()
 

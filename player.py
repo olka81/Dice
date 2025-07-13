@@ -5,7 +5,7 @@ from settings import USE_JOKERS
 class Player:
     def __init__(self, name):
         self.name = name
-        self.dice = [0] * 5  # start with 5 dice
+        self.dice = [0] * 5
         self.counter = None
         self.active = True
 
@@ -51,11 +51,10 @@ class BotPlayer(Player):
         if random.random() < self.bluff_chance:
             return self.make_bluff_bid(count, value)
 
-        # Осторожность: если ставка уже выше ожидаемого — может сказать "liar"
+        #decide if he'd challenge the previous bid
         if count > estimate + self.aggression_level * 2:
             return "liar"
 
-        # Иначе — повысим
         return self.raise_bid(count, value)
 
     def make_first_bid(self, total_dice):
@@ -65,22 +64,25 @@ class BotPlayer(Player):
         total_estimate = my_count + estimate
 
         count = max(1, int(total_estimate * (0.8 + self.aggression_level * 0.4)))
+        #if aggression_level==0 the bot will underbid relative to the estimate (0.8)
+        #if aggression_level==1 the bot will overbid relative to the estimate (1.2)
         return (count, best_value)
 
     def estimate_total(self, value, total_dice):
-        # Моя доля + предполагаемые у других
+        #mine + forecast
         mine = self.count_matching(value)
         others = total_dice - len(self.dice)
         return mine + others / 6
 
     def raise_bid(self, count, value):
+        #TODO better rising strategy
         if value < 6:
             return (count, value + 1)
         else:
             return (count + 1, 2)
 
     def make_bluff_bid(self, count, value):
-        # Поднимаем ставку рискованно
+        #let's bluff
         if random.random() < 0.5 and value < 6:
             return (count, value + 1)
         else:
