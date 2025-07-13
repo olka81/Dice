@@ -1,4 +1,5 @@
 from settings import DEBUG
+from player import BotPlayer
 
 class Round:
     def __init__(self, game):
@@ -15,6 +16,8 @@ class Round:
             print("\nDEBUG: All dices:")
             for p in self.players:
                 print(f"{p.name}: {p.dice}")
+                if isinstance(p, BotPlayer):
+                    print(f"aggression level {p.aggression_level}, bluff chance: {p.bluff_chance}")
 
         idx = 0
         while True:

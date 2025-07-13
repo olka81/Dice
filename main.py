@@ -1,5 +1,6 @@
 from player import BotPlayer, HumanPlayer
 from game import Game
+import random
 
 
 game = Game()
@@ -9,6 +10,6 @@ players = []
 
 players.append(HumanPlayer(name))
 for i in range(bot_count):
-    players.append(BotPlayer(f"Bot {i + 1}"))
+    players.append(BotPlayer(f"Bot {i + 1}", random.random(), random.random()))
 
 game.run(players)

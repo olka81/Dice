@@ -34,32 +34,57 @@ class Player:
 
 
 class BotPlayer(Player):
+
+    def __init__(self, name, aggression_level=0.5, bluff_chance=0.2):
+        super().__init__(name)
+        self.aggression_level = aggression_level
+        self.bluff_chance = bluff_chance
    
     def make_move(self, current_bid, total_dice):
-        count, value = current_bid if current_bid else self.make_first_bid(total_dice)
-        estimate = total_dice // 3
+        if current_bid is None:
+            return self.make_first_bid(total_dice)
 
-        if count >= estimate + 2:
-            return 'liar'
+        count, value = current_bid
+        estimate = self.estimate_total(value, total_dice)
 
+        #decide if he'd like to bluff
+        if random.random() < self.bluff_chance:
+            return self.make_bluff_bid(count, value)
+
+        # Осторожность: если ставка уже выше ожидаемого — может сказать "liar"
+        if count > estimate + self.aggression_level * 2:
+            return "liar"
+
+        # Иначе — повысим
+        return self.raise_bid(count, value)
+
+    def make_first_bid(self, total_dice):
+        best_value = max(self.counter.items(), key=lambda x: x[1])[0]
+        my_count = self.count_matching(best_value)
+        estimate = total_dice / 6
+        total_estimate = my_count + estimate
+
+        count = max(1, int(total_estimate * (0.8 + self.aggression_level * 0.4)))
+        return (count, best_value)
+
+    def estimate_total(self, value, total_dice):
+        # Моя доля + предполагаемые у других
+        mine = self.count_matching(value)
+        others = total_dice - len(self.dice)
+        return mine + others / 6
+
+    def raise_bid(self, count, value):
         if value < 6:
             return (count, value + 1)
         else:
             return (count + 1, 2)
-    
-    def make_first_bid(self, total_dice):
-        best_value = None
-        best_count = -1
-        for value, count in self.counter.items():
-            if count > best_count:
-                best_value = value
-                best_count = count
 
-        others = total_dice - len(self.dice)
-        expected_others = others / 6
-        count = max(1, best_count + int(expected_others))
-
-        return (count, best_value)   
+    def make_bluff_bid(self, count, value):
+        # Поднимаем ставку рискованно
+        if random.random() < 0.5 and value < 6:
+            return (count, value + 1)
+        else:
+            return (count + 1, random.randint(2, 6))
     
 class HumanPlayer(Player):
     def make_move(self, current_bid, total_dice):
